@@ -55,6 +55,15 @@
   // DOM helpers
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+  // Text normalization for robust search (case/diacritics/punctuation-insensitive)
+  function normalizeText(s) {
+    return String(s || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+  }
 
   // Elements
   const form = $('#rangeForm');
@@ -298,7 +307,7 @@
       suggestionsEl.innerHTML = `<div class="card">No vehicle data loaded.</div>`;
       return;
     }
-    const q = (state.searchQuery || '').toLowerCase();
+  const q = normalizeText(state.searchQuery || '');
     const tokens = q.split(/\s+/).filter(Boolean);
     let pool = EV_DATA;
     if (mode !== 'catalog') {
@@ -309,7 +318,7 @@
     let filtered = pool;
     if (tokens.length) {
       filtered = pool.filter(v => {
-        const name = v.name.toLowerCase();
+        const name = normalizeText(v.name);
         return tokens.every(t => name.includes(t));
       });
     }
@@ -538,14 +547,12 @@
   form?.addEventListener('submit', (e) => { e.preventDefault(); update(); });
   form?.addEventListener('input', () => { update(); });
   resetBtn?.addEventListener('click', () => { setInputs(defaults); update(); });
-  // Search wiring (handle input, keyup, and search events for reliability across browsers)
-  const updateSearch = (val) => {
-    state.searchQuery = String(val || '');
+  // Unified search wiring: read current input value directly
+  function refreshSearch(){
+    state.searchQuery = searchInput ? searchInput.value : '';
     renderSuggestions();
-  };
-  searchInput?.addEventListener('input', (e) => updateSearch(e.currentTarget?.value ?? e.target?.value));
-  searchInput?.addEventListener('keyup', (e) => updateSearch(e.currentTarget?.value ?? e.target?.value));
-  searchInput?.addEventListener('search', (e) => updateSearch(e.currentTarget?.value ?? e.target?.value));
+  }
+  ['input','keyup','change','search','paste'].forEach(ev => searchInput?.addEventListener(ev, refreshSearch));
   compareBtn?.addEventListener('click', () => { renderCompare(); compareSection?.classList.remove('hidden'); });
   hideCompareBtn?.addEventListener('click', () => { compareSection?.classList.add('hidden'); });
   clearCompareBtn?.addEventListener('click', () => { state.compareSelected = []; updateCompareTray(); renderSuggestions(); renderCompare(); });
