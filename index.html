@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>EV Range Lab — Predict Your Range</title>
+		<meta name="description" content="Interactive EV range prediction and vehicle suggestions based on your inputs." />
+		<link rel="stylesheet" href="assets/styles.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+	</head>
+	<body>
+		<header class="app-header">
+			<div class="brand">
+				<div class="logo">⚡️</div>
+				<div class="title">
+					<h1>EV Range Lab</h1>
+					<p>Futuristic, physics‑informed EV range predictor</p>
+				</div>
+			</div>
+			<div class="actions">
+				<a href="car.html" class="btn ghost" title="Browse and compare cars">Browse cars</a>
+			</div>
+		</header>
+
+		<main class="container">
+			<section class="panel panel-inputs">
+				<h2>Your Setup</h2>
+				<form id="rangeForm" autocomplete="on">
+					<!-- 10 core features -->
+					<div class="field-grid">
+						<div class="field">
+							<label for="capacity">Battery capacity (kWh)</label>
+							<input id="capacity" name="capacity" type="number" inputmode="decimal" min="10" max="200" step="0.1" placeholder="60" required />
+							<small>Usable pack capacity</small>
+						</div>
+
+						<div class="field">
+							<label for="voltage">Pack voltage (V)</label>
+							<input id="voltage" name="voltage" type="number" inputmode="numeric" min="250" max="900" step="10" placeholder="400" required />
+							<small>Higher voltage typically improves efficiency</small>
+						</div>
+
+						<div class="field">
+							<label for="chemistry">Battery chemistry</label>
+							<select id="chemistry" name="chemistry" required>
+								<option value="LFP">LFP (LiFePO₄)</option>
+								<option value="NMC" selected>NMC (LiNiMnCoO₂)</option>
+								<option value="NCA">NCA (LiNiCoAlO₂)</option>
+								<option value="LTO">LTO (Li₄Ti₅O₁₂)</option>
+							</select>
+							<small>Impacts usable capacity and efficiency slightly</small>
+						</div>
+
+						<div class="field">
+							<label for="cellType">Cell type</label>
+							<select id="cellType" name="cellType" required>
+								<option value="prismatic" selected>Prismatic</option>
+								<option value="cylindrical">Cylindrical</option>
+								<option value="pouch">Pouch</option>
+							</select>
+							<small>Minor impact via thermal/pack efficiency</small>
+						</div>
+
+						<div class="field">
+							<label for="mass">Vehicle mass (kg)</label>
+							<input id="mass" name="mass" type="number" inputmode="numeric" min="900" max="4000" step="10" placeholder="1900" required />
+							<small>Kerb mass without payload</small>
+						</div>
+
+						<div class="field">
+							<label for="cd">Drag coefficient Cd</label>
+							<input id="cd" name="cd" type="number" inputmode="decimal" min="0.18" max="0.40" step="0.005" placeholder="0.24" required />
+							<small>Typical: sedan 0.20–0.26, SUV 0.26–0.32</small>
+						</div>
+
+						<div class="field">
+							<label for="frontalArea">Frontal area (m²)</label>
+							<input id="frontalArea" name="frontalArea" type="number" inputmode="decimal" min="1.8" max="3.5" step="0.01" placeholder="2.4" required />
+							<small>Approx: sedan 2.2–2.5, SUV 2.6–3.0</small>
+						</div>
+
+						<div class="field">
+							<label for="drivetrain">Drivetrain</label>
+							<select id="drivetrain" name="drivetrain" required>
+								<option value="FWD">FWD</option>
+								<option value="RWD" selected>RWD</option>
+								<option value="AWD">AWD / 2 motors</option>
+							</select>
+							<small>Affects drivetrain losses</small>
+						</div>
+
+						<div class="field">
+							<label for="tires">Tire type</label>
+							<select id="tires" name="tires" required>
+								<option value="eco" selected>Eco (LRR)</option>
+								<option value="standard">Standard</option>
+								<option value="performance">Performance</option>
+							</select>
+							<small>Changes rolling resistance</small>
+						</div>
+
+						<div class="field">
+							<label for="temperature">Ambient temperature (°C)</label>
+							<input id="temperature" name="temperature" type="number" inputmode="decimal" min="-30" max="50" step="1" placeholder="20" required />
+							<small>Impacts HVAC and battery efficiency</small>
+						</div>
+					</div>
+
+					<details class="price-box" open>
+						<summary>Price range for suggestions</summary>
+						<div class="field-grid price-grid">
+							<div class="field">
+								<label for="minPrice">Min price (USD)</label>
+								<input id="minPrice" name="minPrice" type="number" inputmode="numeric" min="15000" max="200000" step="500" placeholder="20000" />
+							</div>
+							<div class="field">
+								<label for="maxPrice">Max price (USD)</label>
+								<input id="maxPrice" name="maxPrice" type="number" inputmode="numeric" min="20000" max="300000" step="500" placeholder="60000" />
+							</div>
+						</div>
+					</details>
+
+					<div class="form-actions">
+						<button type="submit" class="btn primary">Predict range</button>
+						<button type="button" id="randomizeBtn" class="btn ghost">Randomize</button>
+					</div>
+				</form>
+			</section>
+
+			<section class="panel panel-results">
+				<h2>Prediction</h2>
+				<div class="results">
+					<div class="gauge" id="rangeGauge" aria-label="Range gauge">
+						<div class="gauge-inner">
+							<div id="rangeGaugeValue">--</div>
+							<div class="gauge-unit">km</div>
+						</div>
+					</div>
+
+					<div class="metrics">
+						<div class="metric">
+							<div class="metric-label">Estimated range</div>
+							<div class="metric-value"><span id="rangeKm">--</span> km • <span id="rangeMi">--</span> mi</div>
+						</div>
+						<div class="metric">
+							<div class="metric-label">Efficiency</div>
+							<div class="metric-value"><span id="effKmPerKwh">--</span> km/kWh • <span id="effWhPerKm">--</span> Wh/km</div>
+						</div>
+						<div class="metric">
+							<div class="metric-label">Consumption</div>
+							<div class="metric-value"><span id="effKwhPer100">--</span> kWh/100 km</div>
+						</div>
+					</div>
+
+					<div class="badges" id="factorsBadges"></div>
+				</div>
+
+				<!-- Real-world extras removed per request -->
+
+				<div class="form-actions" style="justify-content:flex-end; margin-top: 16px;">
+					<button type="button" id="resetBtn" class="btn ghost">Reset</button>
+				</div>
+
+								<h3>Suggestions by price</h3>
+						<div id="suggestions" class="suggestions-grid" aria-live="polite"></div>
+			</section>
+		</main>
+
+		<!-- Assistant removed per request -->
+
+		<footer class="app-footer">
+			<div>
+				<span>EV Range Lab</span> · <span>Local physics + curated data</span>
+			</div>
+			<div class="foot-links">
+				<a href="#" id="exportLink">Export inputs</a>
+				·
+				<a href="#" id="importLink">Import</a>
+				·
+				<a href="#" id="shareLink" title="Copy a link with current inputs">Share link</a>
+			</div>
+		</footer>
+
+		<script>window.CHAT_API_BASE='https://YOUR-RENDER-URL.onrender.com/api/chat';</script>
+		<script src="assets/app.js" defer></script>
+	</body>
+	</html>

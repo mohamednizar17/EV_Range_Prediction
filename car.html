@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EV Range Lab — Cars Catalog</title>
+  <link rel="stylesheet" href="assets/styles.css" />
+  <meta name="description" content="Browse EVs, search by name, and compare up to 5 cars side by side." />
+</head>
+<body data-mode="catalog">
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo">⚡️</div>
+      <div class="title">
+        <h1>EV Range Lab</h1>
+        <p>Browse & compare EVs</p>
+      </div>
+    </div>
+    <div class="actions">
+      <a class="btn ghost" href="index.html" title="Back to estimator">← Estimator</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="panel">
+      <h2>All Electric Cars</h2>
+      <p class="muted">Type to filter by name. Select 2–5 cars to compare.</p>
+
+      <div class="searchbar">
+        <input id="searchInput" type="search" placeholder="Search by name (e.g., kia, tata, tesla)" aria-label="Search car by name" />
+      </div>
+
+      <div class="compare-tray" aria-live="polite">
+        <div>
+          <span class="pill">Selected: <span id="compareCount">0</span>/5</span>
+          <span id="compareHint" class="muted">Pick 2–5 cars to compare</span>
+        </div>
+        <div class="tray-actions">
+          <button id="clearCompareBtn" class="btn ghost" disabled>Clear</button>
+          <button id="compareBtn" class="btn primary" disabled>Compare</button>
+        </div>
+      </div>
+
+      <div id="suggestions" class="suggestions-grid" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <section id="compareSection" class="panel panel-compare hidden" aria-live="polite">
+    <div class="compare-header">
+      <h2>Compare</h2>
+      <div class="compare-controls">
+        <button id="hideCompareBtn" class="btn ghost">Hide</button>
+      </div>
+    </div>
+    <div class="compare-table-wrap">
+      <table id="compareTable" class="compare-table" role="table" aria-label="Vehicle comparison table">
+        <!-- dynamically rendered -->
+      </table>
+    </div>
+  </section>
+
+  <script>window.CHAT_API_BASE='https://YOUR-RENDER-URL.onrender.com/api/chat';</script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
