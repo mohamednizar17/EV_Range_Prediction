@@ -43,7 +43,11 @@
       const reply = data.reply || 'No response';
       history.push({ role:'assistant', content: reply });
       add('bot', reply);
-    } catch(e){ console.error(e); add('bot','Error talking to backend.'); }
+    } catch(e){
+      console.error(e);
+      const msg = (e && e.message) ? e.message : String(e||'');
+      add('bot', 'Error talking to backend: ' + msg.slice(0,180));
+    }
   }
   sendBtn.addEventListener('click', send);
   input.addEventListener('keydown', e => { if(e.key==='Enter') send(); });
