@@ -538,10 +538,14 @@
   form?.addEventListener('submit', (e) => { e.preventDefault(); update(); });
   form?.addEventListener('input', () => { update(); });
   resetBtn?.addEventListener('click', () => { setInputs(defaults); update(); });
-  searchInput?.addEventListener('input', (e) => {
-    state.searchQuery = String(e.target.value || '');
+  // Search wiring (handle input, keyup, and search events for reliability across browsers)
+  const updateSearch = (val) => {
+    state.searchQuery = String(val || '');
     renderSuggestions();
-  });
+  };
+  searchInput?.addEventListener('input', (e) => updateSearch(e.currentTarget?.value ?? e.target?.value));
+  searchInput?.addEventListener('keyup', (e) => updateSearch(e.currentTarget?.value ?? e.target?.value));
+  searchInput?.addEventListener('search', (e) => updateSearch(e.currentTarget?.value ?? e.target?.value));
   compareBtn?.addEventListener('click', () => { renderCompare(); compareSection?.classList.remove('hidden'); });
   hideCompareBtn?.addEventListener('click', () => { compareSection?.classList.add('hidden'); });
   clearCompareBtn?.addEventListener('click', () => { state.compareSelected = []; updateCompareTray(); renderSuggestions(); renderCompare(); });
