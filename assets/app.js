@@ -84,6 +84,7 @@
   const badgesEl = $('#factorsBadges');
   const exportLink = $('#exportLink');
   const importLink = $('#importLink');
+  const shareLink = $('#shareLink');
   const searchInput = $('#searchInput');
   const compareCountEl = $('#compareCount');
   const compareBtn = $('#compareBtn');
