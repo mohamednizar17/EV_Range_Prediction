@@ -35,6 +35,11 @@
   closeBtn.addEventListener('click', toggle);
   async function send(){
     const text = String(input.value||'').trim(); if(!text) return; input.value=''; add('user', text); history.push({ role:'user', content:text });
+    const loadingDiv = document.createElement('div');
+    loadingDiv.className = 'chat-msg bot loading';
+    loadingDiv.textContent = '...';
+    body.appendChild(loadingDiv);
+    body.scrollTop = body.scrollHeight;
     try {
       const payload = { messages: history.slice(-12) };
       const resp = await fetch(apiBase, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
@@ -42,10 +47,12 @@
       const data = await resp.json();
       const reply = data.reply || 'No response';
       history.push({ role:'assistant', content: reply });
+      body.removeChild(loadingDiv);
       add('bot', reply);
     } catch(e){
       console.error(e);
       const msg = (e && e.message) ? e.message : String(e||'');
+      body.removeChild(loadingDiv);
       add('bot', 'Error talking to backend: ' + msg.slice(0,180));
     }
   }
