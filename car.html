@@ -21,43 +21,45 @@
     </div>
   </header>
 
-  <main class="container">
-    <section class="panel">
-      <h2>All Electric Cars</h2>
-      <p class="muted">Type to filter by name. Select 2–5 cars to compare.</p>
-
-      <div class="searchbar">
-        <input id="searchInput" type="search" placeholder="Search by name (e.g., kia, tata, tesla)" aria-label="Search car by name" />
-      </div>
-
-      <div class="compare-tray" aria-live="polite">
-        <div>
-          <span class="pill">Selected: <span id="compareCount">0</span>/5</span>
-          <span id="compareHint" class="muted">Pick 2–5 cars to compare</span>
-        </div>
-        <div class="tray-actions">
-          <button id="clearCompareBtn" class="btn ghost" disabled>Clear</button>
-          <button id="compareBtn" class="btn primary" disabled>Compare</button>
+  <div class="catalog-wrapper">
+    <section id="compareSection" class="panel panel-compare hidden" aria-live="polite">
+      <div class="compare-header">
+        <h2>Compare</h2>
+        <div class="compare-controls">
+          <button id="hideCompareBtn" class="btn ghost">Hide</button>
         </div>
       </div>
-
-      <div id="suggestions" class="suggestions-grid" aria-live="polite"></div>
+      <div class="compare-table-wrap">
+        <table id="compareTable" class="compare-table" role="table" aria-label="Vehicle comparison table">
+          <!-- dynamically rendered -->
+        </table>
+      </div>
     </section>
-  </main>
 
-  <section id="compareSection" class="panel panel-compare hidden" aria-live="polite">
-    <div class="compare-header">
-      <h2>Compare</h2>
-      <div class="compare-controls">
-        <button id="hideCompareBtn" class="btn ghost">Hide</button>
-      </div>
-    </div>
-    <div class="compare-table-wrap">
-      <table id="compareTable" class="compare-table" role="table" aria-label="Vehicle comparison table">
-        <!-- dynamically rendered -->
-      </table>
-    </div>
-  </section>
+    <main class="container">
+      <section class="panel">
+        <h2>All Electric Cars</h2>
+        <p class="muted">Type to filter by name. Select 2–5 cars to compare.</p>
+
+        <div class="searchbar">
+          <input id="searchInput" type="search" placeholder="Search by name (e.g., kia, tata, tesla)" aria-label="Search car by name" />
+        </div>
+
+        <div class="compare-tray" aria-live="polite">
+          <div>
+            <span class="pill">Selected: <span id="compareCount">0</span>/5</span>
+            <span id="compareHint" class="muted">Pick 2–5 cars to compare</span>
+          </div>
+          <div class="tray-actions">
+            <button id="clearCompareBtn" class="btn ghost" disabled>Clear</button>
+            <button id="compareBtn" class="btn primary" disabled>Compare</button>
+          </div>
+        </div>
+
+        <div id="suggestions" class="suggestions-grid" aria-live="polite"></div>
+      </section>
+    </main>
+  </div>
 
   <script>window.CHAT_API_BASE='https://ev-range-prediction-backend.onrender.com/api/chat';</script>
   <script src="assets/app.js" defer></script>
