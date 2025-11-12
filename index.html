@@ -5,10 +5,23 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>EV Range Lab — Predict Your Range</title>
 		<meta name="description" content="Interactive EV range prediction and vehicle suggestions based on your inputs." />
-		<link rel="stylesheet" href="assets/styles.css" />
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="assets/styles.css" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+	<style>
+		/* Keep old 2-column layout for suggestions on index.html */
+		#suggestions {
+			grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+			gap: 12px !important;
+			margin-top: 6px !important;
+		}
+		@media (max-width: 1024px) {
+			#suggestions {
+				grid-template-columns: 1fr !important;
+			}
+		}
+	</style>
 	</head>
 	<body>
 		<header class="app-header">
@@ -157,14 +170,14 @@
 					<div class="badges" id="factorsBadges"></div>
 				</div>
 
-				<!-- Real-world extras removed per request -->
+			<!-- Real-world extras removed per request -->
 
-				<div class="form-actions" style="justify-content:flex-end; margin-top: 16px;">
-					<button type="button" id="resetBtn" class="btn ghost">Reset</button>
-				</div>
+			<div class="form-actions" style="justify-content:flex-end; margin-top: 16px;">
+				<button type="button" id="resetBtn" class="btn ghost">Reset</button>
+			</div>
 
-								<h3>Suggestions by price</h3>
-						<div id="suggestions" class="suggestions-grid" aria-live="polite"></div>
+							<h3>Suggestions by price</h3>
+					<div id="suggestions" class="suggestions-grid" aria-live="polite"></div>
 			</section>
 		</main>
 
