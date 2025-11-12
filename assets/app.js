@@ -565,8 +565,8 @@
     renderSuggestions();
   }
   ['input','keyup','change','search','paste'].forEach(ev => searchInput?.addEventListener(ev, refreshSearch));
-  compareBtn?.addEventListener('click', () => { renderCompare(); compareSection?.classList.remove('hidden'); });
-  hideCompareBtn?.addEventListener('click', () => { compareSection?.classList.add('hidden'); });
+  compareBtn?.addEventListener('click', () => { renderCompare(); compareSection?.classList.remove('hidden'); document.querySelector('.catalog-wrapper')?.classList.add('compare-shown'); });
+  hideCompareBtn?.addEventListener('click', () => { compareSection?.classList.add('hidden'); document.querySelector('.catalog-wrapper')?.classList.remove('compare-shown'); });
   clearCompareBtn?.addEventListener('click', () => { state.compareSelected = []; updateCompareTray(); renderSuggestions(); renderCompare(); });
   randomizeBtn?.addEventListener('click', () => {
     const r = (min, max, step = 1) => Math.round((min + Math.random() * (max - min)) / step) * step;
