@@ -118,12 +118,33 @@
   maxPrice: 60000,
   };
 
-  // Load dataset
+  // Load dataset - try local first, fallback to backend
   let EV_DATA = [];
-  fetch('data/evs.json')
-    .then((r) => r.json())
-    .then((data) => { EV_DATA = data; renderSuggestions(); renderCompare(); })
-    .catch(() => { EV_DATA = []; renderSuggestions(); });
+  async function loadEVData() {
+    try {
+      const r = await fetch('data/evs.json');
+      if (r.ok) {
+        EV_DATA = await r.json();
+      } else {
+        throw new Error('Local fetch failed');
+      }
+    } catch (e1) {
+      // Fallback to backend
+      try {
+        const backendUrl = window.CHAT_API_BASE ? window.CHAT_API_BASE.replace('/api/chat', '/api/evs') : '/api/evs';
+        const r = await fetch(backendUrl);
+        if (r.ok) {
+          EV_DATA = await r.json();
+        }
+      } catch (e2) {
+        console.warn('Could not load EV data from local or backend', e1, e2);
+        EV_DATA = [];
+      }
+    }
+    renderSuggestions();
+    renderCompare();
+  }
+  loadEVData();
 
   // Persist/restore
   const STORAGE_KEY = 'ev-range-lab@v1';
