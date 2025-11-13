@@ -159,8 +159,8 @@
     drivetrain: 'RWD',
     tires: 'eco',
     temperature: 20,
-    minPrice: 20000,
-  maxPrice: 60000,
+    minPrice: 800000,
+  maxPrice: 7500000,
   };
 
   // Load dataset - try local first, fallback to backend
@@ -391,7 +391,7 @@
     if (mode !== 'catalog') {
       const minP = Math.min(inputs.minPrice || 0, inputs.maxPrice || Infinity);
       const maxP = Math.max(inputs.minPrice || 0, inputs.maxPrice || Infinity);
-      pool = EV_DATA.filter(v => v.priceUSD >= minP && v.priceUSD <= maxP);
+      pool = EV_DATA.filter(v => v.priceINR >= minP && v.priceINR <= maxP);
     }
     let filtered = pool;
     if (tokens.length) {
@@ -434,7 +434,7 @@
     suggestionsEl.innerHTML = ranked.map(({ v, est }) => `
       <div class="card">
         <div class="title">${v.name}</div>
-        <div class="kv"><span>Price</span><span>${formatMoney(v.priceUSD)}</span></div>
+        <div class="kv"><span>Price</span><span>${formatMoney(v.priceINR)} ₹</span></div>
         <div class="kv"><span>Battery</span><span>${v.capacity_kWh} kWh</span></div>
         <div class="kv"><span>Voltage</span><span>${v.voltageV || 400} V</span></div>
         <div class="kv"><span>EPA range</span><span>${v.range_km_EPA} km</span></div>
@@ -526,7 +526,7 @@
       return;
     }
     const rows = [
-      { key: 'price', label: 'Price', format: v => formatMoney(v.priceUSD) },
+      { key: 'price', label: 'Price', format: v => formatMoney(v.priceINR) + ' ₹' },
       { key: 'capacity', label: 'Battery', format: v => `${v.capacity_kWh} kWh` },
       { key: 'voltage', label: 'Voltage', format: v => `${v.voltageV || 400} V` },
       { key: 'drivetrain', label: 'Drivetrain', format: v => v.drivetrain },
@@ -647,8 +647,8 @@
       drivetrain: ['FWD','RWD','AWD'][r(0,2,1)],
       tires: ['eco','standard','performance'][r(0,2,1)],
       temperature: r(-10, 40, 1),
-      minPrice: r(20000, 50000, 500),
-      maxPrice: r(50000, 100000, 500),
+      minPrice: r(800000, 2000000, 100000),
+      maxPrice: r(2000000, 7500000, 100000),
     });
     update();
   });
