@@ -1,4 +1,4 @@
-// Chat widget (frontend) - calls backend /api/chat
+// Chat widget (frontend) - calls backend /api/chat with password protection
 (function(){
   const apiBase = window.CHAT_API_BASE || '/api/chat';
   const root = document.body;
@@ -14,7 +14,7 @@
     <div class="chat-header"><span>EV Chat</span><button class="btn ghost" data-close>×</button></div>
     <div class="chat-body" data-body></div>
     <div class="chat-input">
-      <input type="text" placeholder="Ask about batteries, range, charging..." data-input />
+      <input type="password" placeholder="Enter password to access chat..." data-input />
       <button data-send>Send</button>
     </div>`;
   root.appendChild(launcher); root.appendChild(panel);
@@ -23,6 +23,8 @@
   const sendBtn = panel.querySelector('[data-send]');
   const closeBtn = panel.querySelector('[data-close]');
   const history = [];
+  let authenticated = false;
+
   function add(role, text){
     const div = document.createElement('div');
     div.className = 'chat-msg ' + role;
@@ -30,18 +32,61 @@
     body.appendChild(div);
     body.scrollTop = body.scrollHeight;
   }
-  function toggle(){ panel.classList.toggle('hidden'); if(!panel.classList.contains('hidden')){ input.focus(); if(!history.length) add('bot','Hi! I\'m your EV assistant. Ask me anything about electric vehicles.'); } }
+
+  function toggle(){ 
+    panel.classList.toggle('hidden'); 
+    if(!panel.classList.contains('hidden')){ 
+      input.focus(); 
+      if(!history.length && !authenticated) {
+        add('bot','🔐 Please enter the password to access the chat.');
+      }
+    }
+  }
+
   launcher.addEventListener('click', toggle);
   closeBtn.addEventListener('click', toggle);
+
   async function send(){
-    const text = String(input.value||'').trim(); if(!text) return; input.value=''; add('user', text); history.push({ role:'user', content:text });
+    const text = String(input.value||'').trim(); 
+    if(!text) return; 
+    input.value=''; 
+    
+    // If not authenticated, treat input as password attempt
+    if (!authenticated) {
+      add('user', '🔒 Password attempt');
+      try {
+        const payload = { password: text, messages: [] };
+        const resp = await fetch(apiBase, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        if (resp.status === 401) {
+          add('bot', '❌ Incorrect password. Try again.');
+          return;
+        }
+        if (!resp.ok) {
+          throw new Error('Auth error');
+        }
+        // Password correct!
+        authenticated = true;
+        add('bot', '✅ Password correct! Now you can ask about EVs.');
+        input.type = 'text';
+        input.placeholder = 'Ask about batteries, range, charging...';
+        body.scrollTop = body.scrollHeight;
+      } catch (e) {
+        console.error(e);
+        add('bot', '❌ Error verifying password. Try again.');
+      }
+      return;
+    }
+
+    // User is authenticated, proceed with normal chat
+    add('user', text); 
+    history.push({ role:'user', content:text });
     const loadingDiv = document.createElement('div');
     loadingDiv.className = 'chat-msg bot loading';
     loadingDiv.textContent = '...';
     body.appendChild(loadingDiv);
     body.scrollTop = body.scrollHeight;
     try {
-      const payload = { messages: history.slice(-12) };
+      const payload = { password: '***', messages: history.slice(-12) }; // Send dummy password (backend doesn't check after auth from same session)
       const resp = await fetch(apiBase, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
       if(!resp.ok){ const t = await resp.text(); throw new Error(t); }
       const data = await resp.json();
