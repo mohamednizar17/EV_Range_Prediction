@@ -86,7 +86,7 @@
     body.appendChild(loadingDiv);
     body.scrollTop = body.scrollHeight;
     try {
-      const payload = { password: '***', messages: history.slice(-12) }; // Send dummy password (backend doesn't check after auth from same session)
+      const payload = { messages: history.slice(-12) }; // No password needed - backend uses session
       const resp = await fetch(apiBase, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
       if(!resp.ok){ const t = await resp.text(); throw new Error(t); }
       const data = await resp.json();
