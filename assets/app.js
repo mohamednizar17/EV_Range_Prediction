@@ -328,7 +328,7 @@
   }
   function formatMoney(n) {
     if (!Number.isFinite(n)) return '--';
-    return n.toLocaleString(undefined, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+    return n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
   }
 
   // UI update
