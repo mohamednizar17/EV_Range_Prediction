@@ -28,7 +28,12 @@
   function add(role, text){
     const div = document.createElement('div');
     div.className = 'chat-msg ' + role;
-    div.textContent = text;
+    // Check if text contains HTML tags
+    if (text.includes('<') && text.includes('>')) {
+      div.innerHTML = text;
+    } else {
+      div.textContent = text;
+    }
     body.appendChild(div);
     body.scrollTop = body.scrollHeight;
   }
@@ -39,6 +44,7 @@
       input.focus(); 
       if(!history.length && !authenticated) {
         add('bot','🔐 Please enter the password to access the chat.');
+        add('bot','📧 If you don\'t know the password, contact the admin: <a href="mailto:arnizz077@gmail.com" style="color:#2196F3;text-decoration:underline">arnizz077@gmail.com</a>');
       }
     }
   }
