@@ -38,34 +38,13 @@
     body.scrollTop = body.scrollHeight;
   }
 
-  function addContactButton() {
-    const div = document.createElement('div');
-    div.className = 'chat-msg bot';
-    const link = document.createElement('a');
-    link.href = 'mailto:arnizz077@gmail.com';
-    link.textContent = '📧 Contact Admin: arnizz077@gmail.com';
-    link.style.display = 'inline-block';
-    link.style.backgroundColor = '#2196F3';
-    link.style.color = 'white';
-    link.style.padding = '10px 16px';
-    link.style.borderRadius = '4px';
-    link.style.cursor = 'pointer';
-    link.style.fontSize = '14px';
-    link.style.fontWeight = 'bold';
-    link.style.textDecoration = 'none';
-    div.appendChild(link);
-    body.appendChild(div);
-    body.scrollTop = body.scrollHeight;
-  }
-
   function toggle(){ 
     panel.classList.toggle('hidden'); 
     if(!panel.classList.contains('hidden')){ 
       input.focus(); 
       if(!history.length && !authenticated) {
         add('bot','🔐 Please enter the password to access the chat.');
-        add('bot','If you don\'t know the password, click below:');
-        addContactButton();
+        add('bot','📧 If you don\'t know the password, contact the admin: <a href="mailto:arnizz077@gmail.com" style="color:#2196F3;text-decoration:underline">arnizz077@gmail.com</a>');
       }
     }
   }
