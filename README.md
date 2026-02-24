@@ -10,8 +10,8 @@ Designed to demonstrate **frontend engineering, backend API integration, physics
 
 ## 🌍 Live Demo
 
-> Add your deployed GitHub Pages link here
-> Add backend API link here
+>https://mohamednizar17.github.io/EV_Range_Prediction/
+
 
 ---
 
@@ -204,5 +204,6 @@ npm start
 * Add unit & integration tests
 
 ---
+
 
 
